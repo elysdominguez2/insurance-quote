@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { yearDifference, calculateBrand, knowPlan } from '../helper';
+import PropTypes from 'prop-types';
 
 const Field = styled.div`
 	display: flex;
@@ -50,7 +51,7 @@ const Error = styled.div`
 	margin-bottom: 2rem;
 `;
 
-const Form = ({ getResume }) => {
+const Form = ({ setResume, setLoading }) => {
 	const [data, setData] = useState({
 		brand: '',
 		year: '',
@@ -88,17 +89,22 @@ const Form = ({ getResume }) => {
 
 		const increasePlan = knowPlan(plan);
 		result = parseFloat(increasePlan * result).toFixed(2); //este toFixed hace que solo me devuelva 2 numeros despues de la coma y que no se vuelva infinito
-		console.log(result);
 
-		getResume({
-			quote: result,
-			data,
-		});
+		setLoading(true);
+
+		setTimeout(() => {
+			setLoading(false);
+
+			setResume({
+				quote: Number(result),
+				data,
+			});
+		}, 3000);
 	};
 
 	return (
 		<form onSubmit={handleSubmit}>
-			{error ? <Error>All fields are required</Error> : null}
+			{error ? <Error> All fields are required </Error> : null}
 			<Field>
 				<Label> Brand </Label>
 				<Select name="brand" value={brand} onChange={dataInfo}>
@@ -108,28 +114,26 @@ const Form = ({ getResume }) => {
 					<option value="asian"> Asian </option>
 				</Select>
 			</Field>
-
 			<Field>
-				<Label>Year</Label>
+				<Label> Year </Label>
 				<Select name="year" value={year} onChange={dataInfo}>
-					<option value="">--Select--</option>
-					<option value="2023">2023</option>
-					<option value="2022">2022</option>
-					<option value="2021">2021</option>
-					<option value="2020">2020</option>
-					<option value="2019">2019</option>
-					<option value="2018">2018</option>
-					<option value="2017">2017</option>
-					<option value="2016">2016</option>
-					<option value="2015">2015</option>
-					<option value="2014">2014</option>
-					<option value="2013">2013</option>
-					<option value="2012">2012</option>
+					<option value=""> --Select-- </option>
+					<option value="2023"> 2023 </option>
+					<option value="2022"> 2022 </option>
+					<option value="2021"> 2021 </option>
+					<option value="2020"> 2020 </option>
+					<option value="2019"> 2019 </option>
+					<option value="2018"> 2018 </option>
+					<option value="2017"> 2017 </option>
+					<option value="2016"> 2016 </option>
+					<option value="2015"> 2015 </option>
+					<option value="2014"> 2014 </option>
+					<option value="2013"> 2013 </option>
+					<option value="2012"> 2012 </option>
 				</Select>
 			</Field>
-
 			<Field>
-				<Label>Plan</Label>
+				<Label> Plan </Label>
 				<InputRadio
 					type="radio"
 					name="plan"
@@ -147,10 +151,14 @@ const Form = ({ getResume }) => {
 				/>
 				Full
 			</Field>
-
-			<Button type="submit">Quote</Button>
+			<Button type="submit"> Quote </Button>
 		</form>
 	);
+};
+
+Form.propTypes = {
+	setResume: PropTypes.func.isRequired,
+	setLoading: PropTypes.func.isRequired,
 };
 
 export default Form;

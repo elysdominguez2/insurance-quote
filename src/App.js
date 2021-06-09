@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Form from './components/Form';
 import Resume from './components/Resume';
 import Result from './components/Result';
+import SpinnerIcon from './components/Spinner';
 
 import styled from '@emotion/styled';
 
@@ -17,7 +18,7 @@ const FormContainer = styled.div`
 `;
 
 function App() {
-	const [resume, getResume] = useState({
+	const [resume, setResume] = useState({
 		quote: 0,
 		data: {
 			brand: '',
@@ -25,15 +26,19 @@ function App() {
 			plan: '',
 		},
 	});
+
+	const [loading, setLoading] = useState(false);
+
 	const { quote, data } = resume;
 
 	return (
 		<Container>
 			<Header title="Insurance quote" />
 			<FormContainer>
-				<Form getResume={getResume} />
+				<Form setResume={setResume} setLoading={setLoading} />
+				{loading ? <SpinnerIcon /> : null}
 				<Resume data={data} />
-				<Result quote={quote} />
+				{!loading ? <Result quote={quote} /> : null}
 			</FormContainer>
 		</Container>
 	);

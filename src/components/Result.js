@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import PropTypes from 'prop-types';
 
 const Text = styled.p`
 	text-align: center;
@@ -29,6 +30,10 @@ const Result = ({ quote }) => {
 			<QuoteResult>The quote is: ${quote}</QuoteResult>
 		</TextResult>
 	);
+};
+
+Result.propTypes = {
+	quote: PropTypes.number.isRequired,
 };
 
 export default Result;
