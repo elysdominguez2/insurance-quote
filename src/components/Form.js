@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { yearDifference, calculateBrand, knowPlan } from '../helper';
 
 const Field = styled.div`
 	display: flex;
@@ -40,23 +41,80 @@ const Button = styled.button`
 	}
 `;
 
-const Form = () => {
+const Error = styled.div`
+	background-color: red;
+	color: white;
+	padding: 1rem;
+	width: 100%;
+	text-align: center;
+	margin-bottom: 2rem;
+`;
+
+const Form = ({ getResume }) => {
+	const [data, setData] = useState({
+		brand: '',
+		year: '',
+		plan: '',
+	});
+
+	const [error, setError] = useState(false);
+
+	const { brand, year, plan } = data;
+
+	const dataInfo = (e) => {
+		setData({
+			...data,
+			[e.target.name]: e.target.value,
+		});
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		if (brand.trim() === '' || year.trim() === '' || plan.trim() === '') {
+			setError(true);
+			return;
+		}
+		setError(false);
+
+		let result = 2000;
+
+		const difference = yearDifference(year);
+
+		result -= (difference * 3 * result) / 100;
+
+		result = calculateBrand(brand) * result;
+		console.log(result);
+
+		const increasePlan = knowPlan(plan);
+		result = parseFloat(increasePlan * result).toFixed(2); //este toFixed hace que solo me devuelva 2 numeros despues de la coma y que no se vuelva infinito
+		console.log(result);
+
+		getResume({
+			quote: result,
+			data,
+		});
+	};
+
 	return (
-		<form>
+		<form onSubmit={handleSubmit}>
+			{error ? <Error>All fields are required</Error> : null}
 			<Field>
 				<Label> Brand </Label>
-				<Select>
+				<Select name="brand" value={brand} onChange={dataInfo}>
 					<option value=""> --Select-- </option>
-					<option value="American"> American </option>
-					<option value="European"> European </option>
-					<option value="Asian"> Asian </option>
+					<option value="american"> American </option>
+					<option value="european"> European </option>
+					<option value="asian"> Asian </option>
 				</Select>
 			</Field>
 
 			<Field>
 				<Label>Year</Label>
-				<Select>
+				<Select name="year" value={year} onChange={dataInfo}>
 					<option value="">--Select--</option>
+					<option value="2023">2023</option>
+					<option value="2022">2022</option>
 					<option value="2021">2021</option>
 					<option value="2020">2020</option>
 					<option value="2019">2019</option>
@@ -72,11 +130,25 @@ const Form = () => {
 
 			<Field>
 				<Label>Plan</Label>
-				<InputRadio type="radio" name="plan" value="basic" /> Basic
-				<InputRadio type="radio" name="plan" value="full" /> Full
+				<InputRadio
+					type="radio"
+					name="plan"
+					value="basic"
+					checked={plan === 'basic'}
+					onChange={dataInfo}
+				/>
+				Basic
+				<InputRadio
+					type="radio"
+					name="plan"
+					value="full"
+					checked={plan === 'full'}
+					onChange={dataInfo}
+				/>
+				Full
 			</Field>
 
-			<Button type="button">Quote</Button>
+			<Button type="submit">Quote</Button>
 		</form>
 	);
 };

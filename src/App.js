@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Form from './components/Form';
+import Resume from './components/Resume';
+import Result from './components/Result';
 
 import styled from '@emotion/styled';
 
@@ -15,11 +17,23 @@ const FormContainer = styled.div`
 `;
 
 function App() {
+	const [resume, getResume] = useState({
+		quote: 0,
+		data: {
+			brand: '',
+			year: '',
+			plan: '',
+		},
+	});
+	const { quote, data } = resume;
+
 	return (
 		<Container>
 			<Header title="Insurance quote" />
 			<FormContainer>
-				<Form />
+				<Form getResume={getResume} />
+				<Resume data={data} />
+				<Result quote={quote} />
 			</FormContainer>
 		</Container>
 	);
